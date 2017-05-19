@@ -3,7 +3,7 @@ from centos:6.9
 LABEL maintainer zenotech
 
 # Dev dependencies
-RUN yum -y install libnl-devel libstdc++-devel gcc-c++ centos-release-scl libibverbs-devel-static flex bison openssl-devel libX11-devel rpm-build libtool zlib-devel kernel-devel numactl-devel wget imake tcl-devel gtest-devel texlive-devel ImageMagick sqlite-devel && yum -y install devtoolset-4-toolchain && yum clean all
+RUN yum -y install libnl-devel libstdc++-devel gcc-c++ centos-release-scl libibverbs-devel-static flex bison openssl-devel libX11-devel rpm-build libtool zlib-devel kernel-devel numactl-devel wget imake tcl-devel gtest-devel texlive-devel ImageMagick sqlite-devel libffi-devel && yum -y install devtoolset-4-toolchain && yum clean all
 
 # Install cuda
 RUN yum -y install http://developer.download.nvidia.com/compute/cuda/repos/rhel6/x86_64/cuda-repo-rhel6-8.0.61-1.x86_64.rpm && yum -y install cuda-toolkit-8-0 && yum clean all
