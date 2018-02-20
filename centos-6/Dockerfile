@@ -6,7 +6,7 @@ LABEL maintainer zenotech
 RUN yum -y install libnl-devel libstdc++-devel gcc-c++ centos-release-scl libibverbs-devel-static flex bison openssl-devel libX11-devel rpm-build libtool zlib-devel kernel-devel numactl-devel wget imake tcl-devel gtest-devel texlive-devel ImageMagick sqlite-devel libffi-devel && yum -y install devtoolset-4-toolchain && yum clean all
 
 # Install cuda
-RUN yum -y install http://developer.download.nvidia.com/compute/cuda/repos/rhel6/x86_64/cuda-repo-rhel6-8.0.61-1.x86_64.rpm && yum -y install cuda-toolkit-8-0 && yum clean all
+RUN yum -y install http://developer.download.nvidia.com/compute/cuda/repos/rhel6/x86_64/cuda-repo-rhel6-9.1.85-1.x86_64.rpm && yum -y install cuda-toolkit-9-1 && yum clean all
 
 # Install ofed
 RUN wget http://downloads.openfabrics.org/OFED/ofed-3.18-3/OFED-3.18-3.tgz -O /tmp/ofed.tgz && cd /tmp/ && tar xvf ofed.tgz && /tmp/OFED-3.18-3/install.pl -q --basic --without-compat-rdma && yum clean all && rm -rf /tmp/*
@@ -20,7 +20,7 @@ RUN wget http://downloads.openfabrics.org/OFED/ofed-3.18-3/OFED-3.18-3.tgz -O /t
 #RUN wget http://content.allinea.com/downloads/allinea-forge-latest-Ubuntu-12.04-x86_64.tar
 
 # Setup home environment
-RUN useradd -m dev && echo "dev:dev" | chpasswd && usermod -aG wheel dev && mkdir -p /home/dev && chown -R dev: /home/dev && yum -y update && yum -y install git && yum clean all
+RUN useradd -m dev && echo "dev:dev" | chpasswd && usermod -aG wheel dev && mkdir -p /home/dev/BUILD && chown -R dev:dev /home/dev && yum -y update && yum -y install git && yum clean all
 
 RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64 && chmod +x /usr/local/bin/dumb-init
 WORKDIR /home/dev
