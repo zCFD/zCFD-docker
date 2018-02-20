@@ -8,16 +8,8 @@ RUN yum -y install libnl-devel libstdc++-devel gcc-c++ centos-release-scl libibv
 # Install cuda
 RUN yum -y install http://developer.download.nvidia.com/compute/cuda/repos/rhel6/x86_64/cuda-repo-rhel6-9.1.85-1.x86_64.rpm && yum -y install cuda-toolkit-9-1 && yum clean all
 
-# Install ofed
-RUN wget http://downloads.openfabrics.org/OFED/ofed-3.18-3/OFED-3.18-3.tgz -O /tmp/ofed.tgz && cd /tmp/ && tar xvf ofed.tgz && /tmp/OFED-3.18-3/install.pl -q --basic --without-compat-rdma && yum clean all && rm -rf /tmp/*
-#RUN wget http://downloads.openfabrics.org/downloads/OFED/ofed-3.12/OFED-3.12.tgz && tar xvf OFED-3.12.tgz && pushd OFED-3.12 && ./install.pl -q --basic --without-compat-rdma && popd
-#RUN wget http://downloads.openfabrics.org/OFED/ofed-3.18-3/OFED-3.18-3.tgz && tar xvf OFED-3.18-3.tgz && pushd OFED-3.18-3 && ./install.pl -q --basic --without-compat-rdma && popd
-
-#Install MPSS
-#RUN wget http://registrationcenter-download.intel.com/akdlm/irc_nas/9226/mpss-3.7.1-linux.tar -O /tmp/mpss.tar && cd /tmp && tar xf mpss.tar && yum -y localinstall /tmp/mpss-3.7.1/*rpm && yum clean all && rm -rf /tmp/*
-
-# Install ddt
-#RUN wget http://content.allinea.com/downloads/allinea-forge-latest-Ubuntu-12.04-x86_64.tar
+# Install openmpi
+RUN yum -y install openmpi-devel && yum clean all
 
 # Setup home environment
 RUN useradd -m dev && echo "dev:dev" | chpasswd && usermod -aG wheel dev && mkdir -p /home/dev/BUILD && chown -R dev:dev /home/dev && yum -y update && yum -y install git && yum clean all
