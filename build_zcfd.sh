@@ -12,6 +12,6 @@ pushd $SCRIPT_DIR
 
 docker build centos-6 -t zcfd/dev
 
-docker run -it --rm  -v zcfd-dev:/home/dev/BUILD -v $SCRIPT_DIR/../:/home/dev/zCFD -v ~/.ssh:/home/dev/.ssh -e PATH+=/usr/lib64/openmpi/bin/ zcfd/dev /home/dev/zCFD/scripts/build_zcfd.bsh -g --download-dir /home/dev/BUILD/downloads/ $*
+docker run -it --rm  -v zcfd-dev:/home/dev/BUILD -v $SCRIPT_DIR/../:/home/dev/zCFD -v ~/.gitconfig:/home/dev/.gitconfig -v ~/.ssh:/home/dev/.ssh -e PATH+=/usr/lib64/openmpi/bin/ zcfd/dev /home/dev/zCFD/scripts/build_zcfd.bsh -g --download-dir /home/dev/BUILD/downloads/ $*
 
 popd
