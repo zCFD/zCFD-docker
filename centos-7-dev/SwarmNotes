@@ -1,0 +1,13 @@
+docker swarm init --advertise-addr 127.0.0.1
+docker service create --name registry --publish published=5000,target=5000 registry:2
+docker service ls
+curl http://localhost:5000/v2/
+
+# Push image to registry
+docker-compose push
+# Deploy to swarm
+docker stack deploy --compose-file docker-compose.yml centos7dev
+
+docker stack rm centos7dev
+docker service rm registry
+docker swarm leave --force

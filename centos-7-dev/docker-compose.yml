@@ -1,0 +1,31 @@
+version: "3.2"
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: centos7dev
+    container_name: centos7dev_server
+    ports:
+      - 8080:8080
+    volumes:
+      - workspace:/workspace
+      - ~/.ssh:/home/dev/.ssh
+    environment:
+      - GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME}
+      - GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL}
+      - GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
+      - GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 1G
+volumes:
+  workspace:
