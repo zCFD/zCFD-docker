@@ -12,7 +12,7 @@ RUN ln -s /usr/lib64/llvm/libclang.so /usr/lib64/
 RUN yum -y install http://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-repo-rhel7-9.1.85-1.x86_64.rpm && yum -y install cuda-toolkit-9-1 && yum clean all
 
 # Install openmpi
-RUN yum -y install openmpi-devel rh-git29 && yum clean all
+RUN yum -y install mpich-3.2-devel rh-git29 && yum clean all
 
 RUN yum -y install which git tmux glibc-static texlive-collection-latexrecommended && yum clean all
 
@@ -54,7 +54,7 @@ WORKDIR /home/dev
 # Tweak standlone.js conf
 RUN sed -i -e 's_127.0.0.1_0.0.0.0_g' cloud9/configs/standalone.js
 
-ENV PATH=${PATH}:/usr/lib64/openmpi/bin/
+ENV PATH=${PATH}:/usr/lib64/mpich-3.2/bin/
 
 # Ignore .ssh/config file as it can contain MacOS specific entries
 ENV GIT_SSH_COMMAND="ssh -F /dev/null"
