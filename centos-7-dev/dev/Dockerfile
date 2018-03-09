@@ -3,7 +3,7 @@ from centos:7
 LABEL maintainer zenotech
 
 # Dev dependencies
-RUN yum -y install libnl-devel libstdc++-devel gcc-c++ centos-release-scl libibverbs-devel-static flex bison openssl-devel libX11-devel rpm-build libtool zlib-devel kernel-devel numactl-devel wget imake tcl-devel gtest-devel texlive-devel ImageMagick sqlite-devel libffi-devel && yum -y install devtoolset-4-toolchain && yum -y install epel-release && yum -y install htop && yum -y install python27-python-pip python27-python-virtualenv && yum -y install llvm-devel clang-devel && yum -y install gitflow && yum clean all
+RUN yum -y install libnl-devel libstdc++-devel gcc-c++ centos-release-scl libibverbs-devel-static flex bison openssl-devel libX11-devel rpm-build libtool zlib-devel kernel-devel numactl-devel wget imake tcl-devel gtest-devel texlive-devel ImageMagick sqlite-devel libffi-devel && yum -y install devtoolset-4-toolchain && yum -y install epel-release && yum -y install htop && yum -y install python27-python-pip python27-python-virtualenv && yum -y install llvm-devel clang-devel && yum -y install gitflow && yum -y install squashfs-tools && yum clean all
 
 # Ensure clang_tool can find library
 RUN ln -s /usr/lib64/llvm/libclang.so /usr/lib64/
