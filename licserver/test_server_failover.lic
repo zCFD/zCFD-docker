@@ -1,0 +1,4 @@
+SERVER localhost 0242ac116541 5053
+ISV zenotech  binary=/opt/rlm/licences/zenotech port=5056 instance=1 lfpath=cloud/test password="5TZNkdFsXpQGBVzuEvv 2rpDxb9RpuuJ"
+LICENSE reprise rlm_failover_server 1.0 permanent 1
+ hostid=0242ac116541 _primary_server=5053@license_server sig="x"

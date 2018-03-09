@@ -1,0 +1,7 @@
+SERVER localhost 0242ac116541 5053
+ISV zenotech binary=/opt/rlm/licences/zenotech instance=1 lfpath=cloud/test
+#ISV zenotech lfpath=cloud/cambridge instance=2
+#ISV zenotech lfpath=cloud/hpcwales instance=3
+LICENSE zenotech rlm_server_enable_vm 1.0 31-dec-2018 1 _ck=edd6fca3c0
+  sig="60P0452NUE4EM6NH19636SRENN59VS27YPDRXRR22HSFQD1TWV80B308N4RUX63
+  5H9J9YV1ABG"

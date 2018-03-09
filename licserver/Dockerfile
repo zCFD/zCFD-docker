@@ -21,5 +21,10 @@ EXPOSE 5054
 # isv server
 EXPOSE 5056 
 
+# Default to run as primary license server
+ENV PRIMARY_SERVER 1
+
+ADD run_server /usr/local/RLM/
+
 # Run the licence server
-CMD ["/usr/local/RLM/rlm", "-c", "/opt/rlm/licences/server.lic"]
+CMD ["/usr/local/RLM/run_server", "/opt/rlm/licences"]

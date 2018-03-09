@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ "${PRIMARY_SERVER}" = "1" ]; then
+    /usr/local/RLM/rlm -c $1/primary/server.lic -dlog +$1/primary.log
+else
+    /usr/local/RLM/rlm -c $1/failover/server.lic -dlog +$1/failover.log
+fi
