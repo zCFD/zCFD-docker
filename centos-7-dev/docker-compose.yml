@@ -3,15 +3,17 @@ version: "3.2"
 services:
   dev:
     build:
-      context: .
+      context: dev
       dockerfile: Dockerfile
     image: centos7dev
     container_name: centos7dev_server
+    hostname: centos7dev
     ports:
       - 8080:8080
     volumes:
       - workspace:/workspace
       - ~/.ssh:/home/dev/.ssh
+      - licences:/opt/rlm/licences
     environment:
       - GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME}
       - GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL}
@@ -27,5 +29,76 @@ services:
         reservations:
           cpus: '1'
           memory: 1G
+
+  notebook:
+    build: 
+      context: notebook
+      dockerfile: Dockerfile
+    image: centos7notebook
+    container_name: centos7notebook_server
+    hostname: centos7notebook
+    ports:
+      - 8090:8090
+    volumes:
+      - workspace:/workspace
+      - ~/.ssh:/home/dev/.ssh
+    depends_on:
+      - dev
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+
+  lab:
+    build:
+      context: lab
+      dockerfile: Dockerfile
+    image: centos7lab
+    container_name: centos7lab_server
+    hostname: centos7lab
+    ports:
+      - 8095:8095
+    volumes:
+      - workspace:/workspace
+      - ~/.ssh:/home/dev/.ssh
+    depends_on:
+      - dev
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+
+  licserver:
+    build:
+      context: licserver
+      dockerfile: Dockerfile
+    image: licserver
+    container_name: licence_server
+    hostname: licserver
+    mac_address: 02:42:ac:11:65:41
+    ports:
+      - 5053:5053
+      - 5054:5054
+      - 5056:5056
+    volumes:
+      - licences:/opt/rlm/licences
+    environment:
+      - PRIMARY_SERVER=1
+
+  licserver_failover:
+    image: licserver
+    container_name: licence_server_failover
+    hostname: licserver_failover
+    mac_address: 02:42:ac:11:65:42
+    ports:
+      - 6053:5053
+      - 6054:5054
+      - 6056:5056
+    volumes:
+      - licences:/opt/rlm/licences
+    depends_on:
+      - licserver
+    environment:
+      - PRIMARY_SERVER=0
+
 volumes:
   workspace:
+  licences:
