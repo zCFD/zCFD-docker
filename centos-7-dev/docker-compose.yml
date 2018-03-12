@@ -21,6 +21,9 @@ services:
       - GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    privileged: true
+    cap_add:
+      - SYS_ADMIN
     deploy:
       resources:
         limits:
