@@ -20,6 +20,9 @@ RUN yum -y install which git tmux glibc-static texlive-collection-latexrecommend
 RUN curl -sL https://rpm.nodesource.com/setup_5.x | bash -
 RUN yum -y install nodejs
 
+# Install singularity
+RUN git clone https://github.com/singularityware/singularity.git && cd singularity && ./autogen.sh && ./configure && make && make install
+
 RUN mkdir /workspace
 
 # Setup home environment
