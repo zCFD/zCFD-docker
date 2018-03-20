@@ -1,0 +1,3 @@
+[submodule "centos-7-dev/c9"]
+	path = centos-7-dev/c9
+	url = git@github.com:zenotech/cloud9-docker-cpp.git
