@@ -8,8 +8,8 @@ RUN yum -y install libnl-devel libstdc++-devel gcc-c++ centos-release-scl libibv
 # Install cuda
 RUN yum -y install http://developer.download.nvidia.com/compute/cuda/repos/rhel6/x86_64/cuda-repo-rhel6-9.1.85-1.x86_64.rpm && yum -y install cuda-toolkit-9-1 && yum clean all
 
-# Install openmpi
-RUN yum -y install openmpi-devel rh-git29 && yum clean all
+# Install mpich
+RUN yum -y install mpich-devel rh-git29 && yum clean all
 
 # Setup home environment
 RUN useradd -m dev && echo "dev:dev" | chpasswd && usermod -aG wheel dev && mkdir -p /home/dev/BUILD && chown -R dev:dev /home/dev && yum -y update && yum -y install git && yum clean all
@@ -19,7 +19,7 @@ WORKDIR /home/dev
 ENV HOME /home/dev
 USER dev
 
-ENV PATH=${PATH}:/usr/lib64/openmpi/bin/
+ENV PATH=${PATH}:/usr/lib64/mpich/bin/
 
 # Make sure the above SCLs are already enabled
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/usr/bin/scl", "enable", "devtoolset-4", "--", "/usr/bin/scl", "enable", "rh-git29", "--"]
