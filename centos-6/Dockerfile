@@ -11,6 +11,10 @@ RUN yum -y install http://developer.download.nvidia.com/compute/cuda/repos/rhel6
 # Install mpich
 RUN yum -y install mpich-devel rh-git29 && yum clean all
 
+#Install clang 6.0
+ADD llvm.repo /etc/yum.repos.d/llvm.repo
+RUN yum -y install clang clang-devel libc++ libc++-devel lld lldb lldb-devel llvm llvm-devel binutils
+
 # Setup home environment
 RUN useradd -m dev && echo "dev:dev" | chpasswd && usermod -aG wheel dev && mkdir -p /home/dev/BUILD && chown -R dev:dev /home/dev && yum -y update && yum -y install git && yum clean all
 
