@@ -1,0 +1,21 @@
+#!bin/bash
+
+# Get file
+wget http://packages.zenotech.com/parallel_studio_xe_2017_update6.tgz
+
+# Untar
+tar xvf parallel_studio_xe_2017_update6.tgz
+
+# Configure silent install
+sed -i 's/ACCEPT_EULA=decline/ACCEPT_EULA=accept/' parallel_studio_xe_2017_update6/silent.cfg
+sed -i 's/ACTIVATION_TYPE=exist_lic/ACTIVATION_TYPE=license_server/' parallel_studio_xe_2017_update6/silent.cfg
+sed -i 's/#ACTIVATION_LICENSE_FILE=/ACTIVATION_LICENSE_FILE=28000@127.0.0.1/' parallel_studio_xe_2017_update6/silent.cfg
+
+# Open tunnel
+ssh -f -N -T -M -F ~/.ssh/docker_config intellic
+
+# Run install
+pushd parallel_studio_xe_2017_update6 && ./install.sh --silent silent.cfg && popd
+
+# Close tunnel
+ssh -T -O "exit" -F ~/.ssh/docker_config intellic

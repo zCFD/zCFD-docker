@@ -1,0 +1,5 @@
+#!/bin/bash
+
+docker run --rm --volumes-from centos6build_server -v $(pwd):/backup ubuntu:latest tar czvf /backup/workspace.tar.gz /workspace
+docker run --rm --volumes-from centos6build_server -v $(pwd):/backup ubuntu:latest tar czvf /backup/intel.tar.gz /opt/intel
+
