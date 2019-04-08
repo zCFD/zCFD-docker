@@ -1,8 +1,11 @@
 # syntax=docker/dockerfile:experimental
 from centos:7.6.1810 as intel
 
+COPY intel.repo /etc/yum.repos.d/
 COPY parallel_studio_xe_2018_update4_cluster_edition.tgz .
-RUN tar xvzf parallel_studio_xe_2018_update4_cluster_edition.tgz && yum -y install parallel_studio_xe_2018_update4_cluster_edition/rpm/*.rpm && rm -rf parallel_studio_xe_2018_update4_cluster_edition
+RUN tar xvzf parallel_studio_xe_2018_update4_cluster_edition.tgz
+RUN yum --disablerepo=intel-local.repo -y install createrepo && cd parallel_studio_xe_2018_update4_cluster_edition && createrepo rpm
+RUN yum clean metadata && yum -y install intel-parallel-studio-xe-icc intel-parallel-studio-xe-ifort intel-parallel-studio-xe-mkl intel-parallel-studio-xe-mpi
 
 from centos:7.6.1810
 
@@ -20,7 +23,7 @@ RUN --mount=type=cache,target=/var/cache/yum yum -y install https://developer.do
 # Setup home environment
 RUN useradd -m dev && echo "dev:dev" | chpasswd && usermod -aG wheel dev && mkdir -p /home/dev/BUILD && chown -R dev:dev /home/dev
 
-RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64 && chmod +x /usr/local/bin/dumb-init
+RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 && chmod +x /usr/local/bin/dumb-init
 WORKDIR /home/dev
 ENV HOME /home/dev
 USER dev
