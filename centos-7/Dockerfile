@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/var/cache/yum  yum -y install which centos-releas
 COPY --from=intel /opt/intel /opt/intel
 
 RUN --mount=type=cache,target=/var/cache/yum yum -y install devtoolset-7-toolchain rh-git29
-RUN --mount=type=cache,target=/var/cache/yum yum -y install https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-repo-rhel7-10.0.130-1.x86_64.rpm && yum -y install cuda-toolkit-10-0
+RUN --mount=type=cache,target=/var/cache/yum yum -y install https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-repo-rhel7-10.0.130-1.x86_64.rpm && yum -y install cuda
 
 # Setup home environment
 RUN useradd -m dev && echo "dev:dev" | chpasswd && usermod -aG wheel dev && mkdir -p /home/dev/BUILD && chown -R dev:dev /home/dev
