@@ -12,13 +12,16 @@ from centos:7.6.1810
 LABEL maintainer zenotech
 
 # Dev dependencies
-RUN --mount=type=cache,target=/var/cache/yum  yum -y install which centos-release-scl rdma-core-devel libtool kernel-devel kernel-headers numactl-devel wget libffi-devel
+RUN --mount=type=cache,target=/var/cache/yum  yum -y install which centos-release-scl rdma-core-devel libtool kernel-devel kernel-headers numactl-devel wget libffi-devel bzip2
 
 #Install Intel compiler
 COPY --from=intel /opt/intel /opt/intel
 
 RUN --mount=type=cache,target=/var/cache/yum yum -y install devtoolset-7-toolchain rh-git29
-RUN --mount=type=cache,target=/var/cache/yum yum -y install https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-repo-rhel7-10.0.130-1.x86_64.rpm && yum -y install cuda-toolkit-10-0 cuda-drivers-dev-10-0
+RUN --mount=type=cache,target=/var/cache/yum yum -y install https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-repo-rhel7-10.0.130-1.x86_64.rpm && yum -y install cuda-toolkit-10-0
+
+#Workaround for slow Intel license checkout on centos > 7.2
+RUN sed -i 's/myhostname//' /etc/nsswitch.conf
 
 # Setup home environment
 RUN useradd -m dev && echo "dev:dev" | chpasswd && usermod -aG wheel dev && mkdir -p /home/dev/BUILD && chown -R dev:dev /home/dev
