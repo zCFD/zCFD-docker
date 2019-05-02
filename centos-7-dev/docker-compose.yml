@@ -39,47 +39,6 @@ services:
           cpus: '1'
           memory: 1G
 
-  build6:
-    build:
-      context: build6
-      dockerfile: Dockerfile
-    image: centos6build
-    container_name: centos6build_server
-    hostname: centos6build
-    volumes:
-      - workspace:/workspace
-      - ~/.ssh:/home/dev/.ssh
-      - licences:/opt/rlm/licences
-      - /tmp/.X11-unix:/tmp/.X11-unix
-      - type: volume
-        source: intel
-        target: /opt/intel
-        volume:
-          nocopy: true
-    environment:
-      - GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME}
-      - GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL}
-      - GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
-      - GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - DISPLAY=${IP}:0
-    security_opt:
-      - seccomp:./seccomp_profile.json
-    privileged: true
-    cap_add:
-      - SYS_ADMIN
-    sysctls:
-      - net.ipv6.conf.all.disable_ipv6=1
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 4G
-        reservations:
-          cpus: '1'
-          memory: 1G
-
   c9:
     build:
       context: c9
@@ -93,7 +52,7 @@ services:
       - workspace:/workspace
 
   notebook:
-    build: 
+    build:
       context: notebook
       dockerfile: Dockerfile
     image: centos7notebook
@@ -170,7 +129,7 @@ services:
     hostname: intelinstall
     volumes:
       - intel:/opt/intel
-     
+
 volumes:
   workspace:
   licences:

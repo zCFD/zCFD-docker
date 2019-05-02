@@ -1,4 +1,4 @@
-from centos:6.9
+from centos:7
 
 LABEL maintainer zenotech
 
@@ -8,5 +8,3 @@ RUN useradd -ms /bin/bash zcfd
 
 USER zcfd
 WORKDIR /home/zcfd
-
-
