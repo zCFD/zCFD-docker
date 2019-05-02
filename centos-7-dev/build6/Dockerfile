@@ -3,21 +3,22 @@ from centos:6
 LABEL maintainer zenotech
 
 # Dev dependencies
-RUN yum -y install libnl-devel libstdc++-devel gcc-c++ centos-release-scl libibverbs-devel-static flex bison openssl-devel libX11-devel rpm-build libtool zlib-devel kernel-devel numactl-devel wget imake tcl-devel gtest-devel texlive-devel ImageMagick sqlite-devel libffi-devel && yum -y install devtoolset-4-toolchain && yum -y install epel-release && yum -y install htop && yum -y install python27-python-pip python27-python-virtualenv && yum -y install llvm-devel clang-devel && yum -y install gitflow && yum -y install squashfs-tools && yum clean all
+RUN yum -y install centos-release-scl epel-release
+
+RUN yum -y install libnl-devel libstdc++-devel gcc-c++ centos-release-scl libibverbs-devel-static flex bison openssl-devel libX11-devel rpm-build libtool zlib-devel kernel-devel numactl-devel wget imake tcl-devel gtest-devel texlive-devel ImageMagick sqlite-devel libffi-devel which git sudo tmux glibc-static texlive-collection-latexrecommended rh-git29 devtoolset-4-toolchain epel-release htop python27-python-pip python27-python-virtualenv gitflow squashfs-tools && yum clean all
 
 # Ensure clang_tool can find library
-RUN ln -s /usr/lib64/llvm/libclang.so /usr/lib64/
+#RUN ln -s /usr/lib64/llvm/libclang.so /usr/lib64/
 
 # Install cuda
 RUN yum -y install http://developer.download.nvidia.com/compute/cuda/repos/rhel6/x86_64/cuda-repo-rhel6-9.1.85-1.x86_64.rpm && yum -y install cuda-toolkit-9-1 && yum clean all
 
-# Install openmpi
-RUN yum -y install mpich-3.2-devel rh-git29 && yum clean all
-
-RUN yum -y install which git tmux glibc-static texlive-collection-latexrecommended && yum clean all
+# Install mpi
+RUN yum -y install mpich-devel && yum clean all
 
 # Install sshd
 RUN yum -y install openssh-server openssh-clients && yum clean all
+
 # Create server keys
 RUN  /etc/init.d/sshd start
 
@@ -36,12 +37,12 @@ RUN git clone https://github.com/singularityware/singularity.git && cd singulari
 RUN mkdir /workspace
 
 # Setup home environment
-RUN groupadd -g 1000 dev && useradd -u 1000 -g 1000 -m dev && echo "dev:dev" | chpasswd && usermod -aG wheel dev && mkdir -p /home/dev/BUILD && chown -R dev:dev /home/dev && yum -y update && yum -y install git sudo && yum clean all
+RUN groupadd -g 1000 dev && useradd -u 1000 -g 1000 -m dev && echo "dev:dev" | chpasswd && usermod -aG wheel dev && chown -R dev:dev /home/dev && yum -y update && yum clean all
 
 RUN chown -R dev:dev /workspace
 
 # Config sudo
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN echo 'dev ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64 && chmod +x /usr/local/bin/dumb-init
 #WORKDIR /home/dev
