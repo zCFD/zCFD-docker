@@ -1,0 +1,94 @@
+#!/bin/bash
+
+source /usr/share/ddidier/bash_colours
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+function sphinx_init_log() {
+    echo -e "${BOLD_YELLOW}[sphinx-init] $1 ${TXT_RESET}"
+}
+
+# ---------------------------------------- Generate documentation skeleton -----
+
+sphinx_init_log "Generating documentation skeleton"
+sphinx-quickstart --makefile --no-batchfile "$@"
+
+# ----------------------------- Find where is located the source directory -----
+
+if [ -f "$DATA_DIR/conf.py" ]; then
+    source_dir="$DATA_DIR"
+elif [ -f "$DATA_DIR/source/conf.py" ]; then
+    source_dir="$DATA_DIR/source"
+else
+    echo -e "${BOLD_RED}"
+    echo -e " ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓"
+    echo -e " ┃ ERROR: cannot find the file 'conf.py' in the directories                  ┃"
+    echo -e " ┃        /doc and /doc/source                                               ┃"
+    echo -e " ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
+    echo -e "${TXT_RESET}"
+    exit 1
+fi
+
+# ----------------------------------------------------- Customize Makefile -----
+
+sphinx_init_log "Customizing Makefile"
+
+makefile="$DATA_DIR/Makefile"
+
+sphinx_init_log "  - Copying '$makefile' to '$makefile.bak'"
+cp -n $makefile $makefile.bak
+
+sphinx_init_log "  - Adding 'livehtml' target to Makefile"
+echo -e ""                                                                                                                          >> "$makefile"
+echo -e ""                                                                                                                          >> "$makefile"
+echo -e "SPHINXPORT = 8000"                                                                                                         >> "$makefile"
+echo -e ""                                                                                                                          >> "$makefile"
+echo -e "livehtml:"                                                                                                                 >> "$makefile"
+echo -e "\tsphinx-autobuild -b html --host 0.0.0.0 --port \$(SPHINXPORT) \$(ALLSPHINXOPTS) \"\$(SOURCEDIR)\" \"\$(BUILDDIR)/html\"" >> "$makefile"
+
+# sphinx_init_log "  - Adding 'rinoh' target to Makefile"
+# echo -e ""                                                                      >> "$makefile"
+# echo -e "rinoh:"                                                                >> "$makefile"
+# echo -e "\t@\$(SPHINXBUILD) -b rinoh \"\$(SOURCEDIR)\" \"\$(BUILDDIR)/rinoh\""  >> "$makefile"
+
+# ------------------------------------------------ Customize configuration -----
+
+sphinx_init_log "Customizing configuration"
+
+configuration_file=$source_dir/conf.py
+
+sphinx_init_log "  - Copying '$configuration_file' to '$configuration_file.bak'"
+cp -n $configuration_file $configuration_file.bak
+
+sphinx_init_log "  - Adding extensions"
+sphinx_init_log "  - Enabling Markdown"
+sphinx_init_log "  - Enabling TODOs"
+
+cat /opt/ddidier/sphinx/init/conf.py >> $configuration_file
+
+image_tag=$(cat /proc/self/cgroup | grep "memory:/docker/" | tr '/' '\n' | tail -n 1)
+sed -i -E 's/(ddidier_sphinxdoc_image_tag =) .*/\1 '"'$image_tag'"'/' $configuration_file
+
+# ----------------------------------------------------- Add some resources -----
+
+site_packages_dir=/usr/local/lib/python3.6/site-packages
+
+sphinx_init_log "Adding resources"
+
+sphinx_init_log "  - Adding 'sphinxcontrib-excel-table' resources"
+excel_table_dir=$site_packages_dir/sphinxcontrib/excel_table
+cp -n $excel_table_dir/resources/_templates/layout.html            $source_dir/_templates/
+cp -n $excel_table_dir/resources/_static/handsontable.full.min.js  $source_dir/_static/
+cp -n $excel_table_dir/resources/_static/handsontable.full.min.css $source_dir/_static/
+
+# -------------------------------------------------- Add pseudo extensions -----
+
+sphinx_init_log "Adding pseudo extensions"
+mkdir $source_dir/_python/
+cp -n /opt/ddidier/sphinx/python/* $source_dir/_python/
+
+# ---------------------------------------------------- Add utility scripts -----
+
+sphinx_init_log "Adding utility scripts"
+mkdir $DATA_DIR/bin/
+cp -n /opt/ddidier/sphinx/bash/* $DATA_DIR/bin/

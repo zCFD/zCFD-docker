@@ -1,0 +1,49 @@
+#!/bin/bash
+
+set -e
+
+# Adapted from:
+# https://denibertovic.com/posts/handling-permissions-with-docker-volumes/
+
+source /usr/share/ddidier/bash_colours
+
+if [ -z ${USER_ID+x} ]; then
+    echo -e "$BOLD_RED"
+    echo -e " ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓"
+    echo -e " ┃ WARNING: environment variable USER_ID is not set (default is 9001)        ┃"
+    echo -e " ┃ USAGE: docker run ... -e USER_ID=\$UID ...                                 ┃"
+    echo -e " ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
+    echo -e "$TXT_RESET"
+fi
+
+USER_ID=${USER_ID:-9001}
+USER_NAME=sphinx-doc
+
+if id -u $USER_NAME &> /dev/null; then
+    # echo "User '$USER_NAME' does exist"
+    existing_user_id=$(id -u $USER_NAME)
+
+    if [ $existing_user_id -eq $USER_ID ]; then
+        # echo "User '$USER_NAME' does exist and has the same ID ($USER_ID)"
+        :
+    else
+        # echo "User '$USER_NAME' does exist but has a different ID ($existing_user_id) than $USER_ID"
+        echo -e "$BOLD_RED"
+        echo -e " ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo -e " ┃ FATAL ERROR!                                                               "
+        echo -e " ┃                                                                            "
+        echo -e " ┃ User '$USER_NAME' does already exist with the ID $existing_user_id         "
+        echo -e " ┃ which is different from the requested ID $USER_ID                          "
+        echo -e " ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo -e "$TXT_RESET"
+        exit 1
+    fi
+else
+    # echo "User '$USER_NAME' does not exist"
+    # echo "Creating user '$USER_NAME' with ID $USER_ID"
+    useradd --shell /bin/bash -u $USER_ID -o -c "" -m $USER_NAME
+fi
+
+export HOME=/home/$USER_NAME
+
+exec gosu $USER_NAME "$@"
