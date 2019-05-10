@@ -14,6 +14,9 @@ RUN useradd -ms /bin/bash zcfd && mkdir /data && chown zcfd /data
 
 COPY --chown=zcfd --from=download /zcfd /zcfd
 
+COPY zcfd.lic /zcfd/lic/
+RUN chmod 644 /zcfd/lic/zcfd.lic
+
 USER zcfd
 WORKDIR /data
 
