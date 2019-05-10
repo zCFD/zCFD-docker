@@ -17,6 +17,6 @@ COPY --chown=zcfd --from=download /zcfd /zcfd
 USER zcfd
 WORKDIR /data
 
-ENV RLM_LICENSE 6054@licsvr.zenotech.com
+ENV RLM_LICENSE 6053@licsvr.zenotech.com
 ENV RLM_LICENSE_PASSWORD "setme"
 CMD /zcfd/bin/run_zcfd
