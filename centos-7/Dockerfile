@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:experimental
 from centos:7.6.1810 as intel
 
+# When updating the intel compiler also update enable_intel script
 COPY intel.repo /etc/yum.repos.d/
 COPY parallel_studio_xe_2018_update4_cluster_edition.tgz .
 RUN tar xvzf parallel_studio_xe_2018_update4_cluster_edition.tgz
@@ -38,16 +39,12 @@ WORKDIR /home/dev
 ENV HOME /home/dev
 USER dev
 
+ENV PATH=${PATH}:/usr/local/cuda/bin
+
 ENV INTEL_LICENSE_FILE=28000@172.17.0.1
-ENV PATH=${PATH}:/usr/local/cuda/bin:/opt/intel/compilers_and_libraries_2018.5.274/linux/bin/intel64:/opt/intel/compilers_and_libraries_2018.5.274/linux/mpi/intel64/bin
-ENV LIBRARY_PATH=/usr/local/cuda/lib64:/opt/intel/compilers_and_libraries_2018.5.274/linux/compiler/lib/intel64:/opt/intel/compilers_and_libraries_2018.5.274/linux/compiler/lib/intel64_lin:/opt/intel/compilers_and_libraries_2018.5.274/linux/mpi/intel64/lib:/opt/intel/compilers_and_libraries_2018.5.274/linux/mpi/mic/lib:/opt/intel/compilers_and_libraries_2018.5.274/linux/ipp/lib/intel64:/opt/intel/mic/coi/host-linux-release/lib:/opt/intel/mic/myo/lib:/opt/intel/compilers_and_libraries_2018.5.274/linux/compiler/lib/intel64_lin:/opt/intel/compilers_and_libraries_2018.5.274/linux/mkl/lib/intel64_lin:/opt/intel/compilers_and_libraries_2018.5.274/linux/tbb/lib/intel64/gcc4.4:/opt/intel/debugger_2018/iga/lib:/opt/intel/debugger_2018/libipt/intel64/lib:/opt/intel/compilers_and_libraries_2018.5.274/linux/daal/lib/intel64_lin:/opt/intel/compilers_and_libraries_2018.5.274/linux/daal/../tbb/lib/intel64_lin/gcc4.4
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:/opt/intel/compilers_and_libraries_2018.5.274/linux/compiler/lib/intel64:/opt/intel/compilers_and_libraries_2018.5.274/linux/compiler/lib/intel64_lin:/opt/intel/compilers_and_libraries_2018.5.274/linux/mpi/intel64/lib:/opt/intel/compilers_and_libraries_2018.5.274/linux/mpi/mic/lib:/opt/intel/compilers_and_libraries_2018.5.274/linux/ipp/lib/intel64:/opt/intel/mic/coi/host-linux-release/lib:/opt/intel/mic/myo/lib:/opt/intel/compilers_and_libraries_2018.5.274/linux/compiler/lib/intel64_lin:/opt/intel/compilers_and_libraries_2018.5.274/linux/mkl/lib/intel64_lin:/opt/intel/compilers_and_libraries_2018.5.274/linux/tbb/lib/intel64/gcc4.4:/opt/intel/debugger_2018/iga/lib:/opt/intel/debugger_2018/libipt/intel64/lib:/opt/intel/compilers_and_libraries_2018.5.274/linux/daal/lib/intel64_lin:/opt/intel/compilers_and_libraries_2018.5.274/linux/daal/../tbb/lib/intel64_lin/gcc4.4
-ENV I_MPI_ROOT=/opt/intel/compilers_and_libraries_2018.5.274/linux/mpi
-ENV MKLROOT=/opt/intel/compilers_and_libraries_2018.5.274/linux/mkl
-ENV DAALROOT=/opt/intel/compilers_and_libraries_2018.5.274/linux/daal
-ENV TBBROOT=/opt/intel/compilers_and_libraries_2018.5.274/linux/tbb
-ENV CPATH=/opt/intel/compilers_and_libraries_2018.5.274/linux/ipp/include:/opt/intel/compilers_and_libraries_2018.5.274/linux/mkl/include:/opt/intel/compilers_and_libraries_2018.5.274/linux/tbb/include:/opt/intel/compilers_and_libraries_2018.5.274/linux/daal/include
+
+COPY enable_intel /home/dev/
 
 # Make sure the above SCLs are already enabled
-ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/usr/bin/scl", "enable", "devtoolset-7", "--", "/usr/bin/scl", "enable", "rh-git29", "--"]
+ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/home/dev/enable_intel"]
 CMD ["/bin/bash"]
