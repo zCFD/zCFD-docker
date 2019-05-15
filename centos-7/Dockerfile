@@ -20,10 +20,15 @@ COPY --from=intel /opt/intel /opt/intel
 RUN --mount=type=cache,target=/var/cache/yum yum -y install devtoolset-7-toolchain rh-git29
 RUN --mount=type=cache,target=/var/cache/yum yum -y install https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-repo-rhel7-10.0.130-1.x86_64.rpm && yum -y install cuda-toolkit-10-0
 
-#TODO: remove once sqlite3 is in the superbuild
+# TODO: remove once sqlite3 is in the superbuild
 RUN --mount=type=cache,target=/var/cache/yum yum -y install sqlite-devel
-#Workaround for slow Intel license checkout on centos > 7.2
+
+# Workaround for slow Intel license checkout on centos > 7.2
 RUN sed -i 's/myhostname//' /etc/nsswitch.conf
+
+# Patch cuda-10.0 to work with intel 2019 - Remove when switching to cuda-10.1
+COPY cuda.patch /usr/local
+RUN cd /usr/local/cuda && patch -p0 < ../cuda.patch
 
 # Setup home environment
 RUN useradd -m dev && echo "dev:dev" | chpasswd && usermod -aG wheel dev && mkdir -p /home/dev/BUILD && chown -R dev:dev /home/dev
