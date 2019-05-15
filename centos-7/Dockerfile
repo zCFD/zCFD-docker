@@ -44,8 +44,8 @@ ENV PATH=${PATH}:/usr/local/cuda/bin
 
 ENV INTEL_LICENSE_FILE=28000@172.17.0.1
 
-COPY enable_intel /home/dev/
+COPY enable_intel /usr/local/
 
 # Make sure the above SCLs are already enabled
-ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/home/dev/enable_intel"]
+ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/usr/local/enable_intel"]
 CMD ["/bin/bash"]
