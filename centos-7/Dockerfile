@@ -3,9 +3,9 @@ from centos:7.6.1810 as intel
 
 # When updating the intel compiler also update enable_intel script
 COPY intel.repo /etc/yum.repos.d/
-COPY parallel_studio_xe_2018_update4_cluster_edition.tgz .
-RUN tar xvzf parallel_studio_xe_2018_update4_cluster_edition.tgz
-RUN yum --disablerepo=intel-local.repo -y install createrepo && cd parallel_studio_xe_2018_update4_cluster_edition && createrepo rpm
+COPY parallel_studio_xe_2019_update2_cluster_edition.tgz .
+RUN tar  oxvzf parallel_studio_xe_2019_update2_cluster_edition.tgz
+RUN yum --disablerepo=intel-local.repo -y install createrepo && cd parallel_studio_xe_2019_update2_cluster_edition  && createrepo rpm
 RUN yum clean metadata && yum -y install intel-parallel-studio-xe-icc intel-parallel-studio-xe-ifort intel-parallel-studio-xe-mkl intel-parallel-studio-xe-mpi
 
 from centos:7.6.1810
