@@ -4,3 +4,5 @@
 /usr/bin/scl enable rh-git29
 
 source /opt/intel/compilers_and_libraries_2019.2.187/linux/bin/compilervars.sh intel64
+
+exec $*
