@@ -10,6 +10,6 @@ SCRIPT_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 pushd $SCRIPT_DIR
 
-docker run -it --rm  -v $SCRIPT_DIR/../:/workdir/zCFD unibeautify/clang-format clang-format -i --style=google --verbose $(cd $SCRIPT_DIR/../ && git ls-files | sed -e 's,^,zCFD/,' | grep -e\\\.cpp\$ -e\\\.cu\$ -e\\\.h\$ -e\\\.cxx\$)
+docker run -it --rm  -v $SCRIPT_DIR/../:/workdir/zCFD unibeautify/clang-format clang-format -i --style=file --verbose $(cd $SCRIPT_DIR/../ && git ls-files | sed -e 's,^,zCFD/,' | grep -e\\\.cpp\$ -e\\\.cu\$ -e\\\.h\$ -e\\\.cxx\$)
 
 popd
