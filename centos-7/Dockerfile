@@ -1,11 +1,12 @@
 # syntax=docker/dockerfile:experimental
 from centos:7.6.1810 as intel
 
-# When updating the intel compiler also update enable_intel script
+# When updating the intel compiler also update enable_intel and intel.repo  script
 COPY intel.repo /etc/yum.repos.d/
 COPY parallel_studio_xe_2019_update2_cluster_edition.tgz .
-RUN tar  oxvzf parallel_studio_xe_2019_update2_cluster_edition.tgz
-RUN yum --disablerepo=intel-local.repo -y install createrepo && cd parallel_studio_xe_2019_update2_cluster_edition  && createrepo rpm
+RUN yum --disablerepo=intel-local.repo -y install createrepo 
+# This needs to be run as a single layer otherwise createrepo fails as python cannot copy between layers
+RUN tar xvzf parallel_studio_xe_2019_update2_cluster_edition.tgz && cd parallel_studio_xe_2019_update2_cluster_edition && createrepo rpm
 RUN yum clean metadata && yum -y install intel-parallel-studio-xe-icc intel-parallel-studio-xe-ifort intel-parallel-studio-xe-mkl intel-parallel-studio-xe-mpi
 
 from centos:7.6.1810
@@ -22,7 +23,7 @@ RUN --mount=type=cache,target=/var/cache/yum yum -y install devtoolset-7-toolcha
 RUN --mount=type=cache,target=/var/cache/yum yum -y install https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-repo-rhel7-10.0.130-1.x86_64.rpm && yum -y install cuda-toolkit-10-0
 
 # TODO: remove once sqlite3 is in the superbuild
-RUN --mount=type=cache,target=/var/cache/yum yum -y install sqlite-devel
+RUN --mount=type=cache,target=/var/cache/yum yum -y install sqlite-devel patch
 
 # Workaround for slow Intel license checkout on centos > 7.2
 RUN sed -i 's/myhostname//' /etc/nsswitch.conf
