@@ -1,15 +1,15 @@
 # syntax=docker/dockerfile:experimental
-from centos:7.6.1810 as intel
+FROM centos:7.6.1810 as intel
 
 # When updating the intel compiler also update enable_intel and intel.repo  script
 COPY intel.repo /etc/yum.repos.d/
 COPY parallel_studio_xe_2019_update2_cluster_edition.tgz .
-RUN yum --disablerepo=intel-local.repo -y install createrepo 
+RUN yum --disablerepo=intel-local.repo -y install createrepo
 # This needs to be run as a single layer otherwise createrepo fails as python cannot copy between layers
 RUN tar xvzf parallel_studio_xe_2019_update2_cluster_edition.tgz && cd parallel_studio_xe_2019_update2_cluster_edition && createrepo rpm
 RUN yum clean metadata && yum -y install intel-parallel-studio-xe-icc intel-parallel-studio-xe-ifort intel-parallel-studio-xe-mkl intel-parallel-studio-xe-mpi
 
-from centos:7.6.1810
+FROM centos:7.6.1810
 
 LABEL maintainer zenotech
 
