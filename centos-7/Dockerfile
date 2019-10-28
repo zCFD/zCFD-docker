@@ -3,18 +3,18 @@ FROM centos:7.6.1810 as intel
 
 # When updating the intel compiler also update enable_intel and intel.repo  script
 COPY intel.repo /etc/yum.repos.d/
-COPY parallel_studio_xe_2019_update2_cluster_edition.tgz .
+COPY parallel_studio_xe_2019_update4_cluster_edition.tgz .
 RUN yum --disablerepo=intel-local.repo -y install createrepo
 # This needs to be run as a single layer otherwise createrepo fails as python cannot copy between layers
-RUN tar xvzf parallel_studio_xe_2019_update2_cluster_edition.tgz && cd parallel_studio_xe_2019_update2_cluster_edition && createrepo rpm
-RUN yum clean metadata && yum -y install intel-parallel-studio-xe-icc intel-parallel-studio-xe-ifort intel-parallel-studio-xe-mkl intel-parallel-studio-xe-mpi
+RUN tar xvzf parallel_studio_xe_2019_update4_cluster_edition.tgz && cd parallel_studio_xe_2019_update4_cluster_edition && createrepo rpm
+RUN yum clean metadata && yum -y install intel-parallel-studio-xe-icc intel-parallel-studio-xe-ifort intel-parallel-studio-xe-mkl intel-parallel-studio-xe-mpi intel-clck-2019.4.0-20190416-2019.4.0-20190416
 
 FROM centos:7.6.1810
 
 LABEL maintainer zenotech
 
 # Dev dependencies
-RUN --mount=type=cache,target=/var/cache/yum  yum -y install which centos-release-scl rdma-core-devel libtool kernel-devel kernel-headers numactl-devel wget libffi-devel bzip2 bison flex
+RUN --mount=type=cache,target=/var/cache/yum  yum -y install which centos-release-scl rdma-core-devel libtool kernel-devel kernel-headers numactl-devel wget libffi-devel bzip2 bison flex libXft-devel
 
 #Install Intel compiler
 COPY --from=intel /opt/intel /opt/intel
