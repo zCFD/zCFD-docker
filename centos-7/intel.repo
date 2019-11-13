@@ -1,5 +1,5 @@
 [intel-local.repo]
 name=intel-local
-baseurl=file:///parallel_studio_xe_2019_update4_cluster_edition/rpm/
+baseurl=file:///parallel_studio_xe_2019_update5_cluster_edition/rpm/
 enabled=1
 gpgcheck=0
