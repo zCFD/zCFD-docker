@@ -14,7 +14,7 @@ FROM centos:7.6.1810
 LABEL maintainer zenotech
 
 # Dev dependencies
-RUN --mount=type=cache,target=/var/cache/yum  yum -y install which centos-release-scl rdma-core-devel libtool kernel-devel kernel-headers numactl-devel wget libffi-devel bzip2 bison flex libXft-devel
+RUN --mount=type=cache,target=/var/cache/yum  yum -y install which centos-release-scl rdma-core-devel libtool kernel-devel kernel-headers numactl-devel wget libffi-devel bzip2 bison flex libXft-devel tcl-devel tk-devel
 
 #Install Intel compiler
 COPY --from=intel /opt/intel /opt/intel
@@ -22,8 +22,8 @@ COPY --from=intel /opt/intel /opt/intel
 RUN --mount=type=cache,target=/var/cache/yum yum -y install devtoolset-7-toolchain rh-git29
 RUN --mount=type=cache,target=/var/cache/yum yum -y install https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-repo-rhel7-10.0.130-1.x86_64.rpm && yum -y install cuda-toolkit-10-0
 
-# TODO: remove once sqlite3 is in the superbuild
-RUN --mount=type=cache,target=/var/cache/yum yum -y install sqlite-devel patch && yum -y remove zlib-devel
+# Install patch and ensure we use our zlib version - NOTE: nodeps package deletion
+RUN --mount=type=cache,target=/var/cache/yum yum -y install sudo patch && rpm -e --nodeps zlib-devel freetype-devel libpng-devel 
 
 # Workaround for slow Intel license checkout on centos > 7.2
 RUN sed -i 's/myhostname//' /etc/nsswitch.conf
@@ -34,6 +34,9 @@ RUN cd /usr/local/cuda && patch -p0 < ../cuda.patch
 
 # Setup home environment
 RUN useradd -m dev && echo "dev:dev" | chpasswd && usermod -aG wheel dev && mkdir -p /home/dev/BUILD && chown -R dev:dev /home/dev
+
+# Config sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 && chmod +x /usr/local/bin/dumb-init
 WORKDIR /home/dev
