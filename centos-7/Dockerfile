@@ -14,7 +14,7 @@ FROM centos:7.6.1810
 LABEL maintainer zenotech
 
 # Dev dependencies
-RUN --mount=type=cache,target=/var/cache/yum  yum -y install which centos-release-scl rdma-core-devel libtool kernel-devel kernel-headers numactl-devel wget libffi-devel bzip2 bison flex libXft-devel tcl-devel tk-devel
+RUN --mount=type=cache,target=/var/cache/yum  yum -y install which centos-release-scl rdma-core-devel libtool kernel-devel kernel-headers numactl-devel wget libffi-devel bzip2 bison flex libXft-devel tcl-devel tk-devel bc bind-utils
 
 #Install Intel compiler
 COPY --from=intel /opt/intel /opt/intel
