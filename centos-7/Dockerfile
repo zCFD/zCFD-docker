@@ -3,11 +3,11 @@ FROM centos:7.6.1810 as intel
 
 # When updating the intel compiler also update enable_intel and intel.repo  script
 COPY intel.repo /etc/yum.repos.d/
-COPY parallel_studio_xe_2019_update5_cluster_edition.tgz .
+COPY parallel_studio_xe_2020_update1_cluster_edition.tgz .
 RUN yum --disablerepo=intel-local.repo -y install createrepo
 # This needs to be run as a single layer otherwise createrepo fails as python cannot copy between layers
-RUN tar xvzf parallel_studio_xe_2019_update5_cluster_edition.tgz && cd parallel_studio_xe_2019_update5_cluster_edition && createrepo rpm
-RUN yum clean metadata && yum -y install intel-parallel-studio-xe-icc intel-parallel-studio-xe-ifort intel-parallel-studio-xe-mkl intel-parallel-studio-xe-mpi intel-clck-2019.5-20190816-2019.5-20190816 
+RUN tar xvzf parallel_studio_xe_2020_update1_cluster_edition.tgz && cd parallel_studio_xe_2020_update1_cluster_edition && createrepo rpm
+RUN yum clean metadata && yum -y install intel-parallel-studio-xe-icc intel-parallel-studio-xe-ifort intel-parallel-studio-xe-mkl intel-parallel-studio-xe-mpi intel-clck-2019.8-20200310-2019.8-20200310
 
 FROM centos:7.6.1810
 
@@ -19,7 +19,7 @@ RUN --mount=type=cache,target=/var/cache/yum  yum -y install which centos-releas
 #Install Intel compiler
 COPY --from=intel /opt/intel /opt/intel
 
-RUN --mount=type=cache,target=/var/cache/yum yum -y install devtoolset-7-toolchain rh-git29 rh-nodejs8
+RUN --mount=type=cache,target=/var/cache/yum yum -y install devtoolset-7-toolchain rh-git29 rh-nodejs10
 RUN --mount=type=cache,target=/var/cache/yum yum -y install https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-repo-rhel7-10.0.130-1.x86_64.rpm && yum -y install cuda-toolkit-10-0
 
 # Install patch and ensure we use our zlib version - NOTE: nodeps package deletion
@@ -31,6 +31,14 @@ RUN sed -i 's/myhostname//' /etc/nsswitch.conf
 # Patch cuda-10.0 to work with intel 2019 - Remove when switching to cuda-10.1
 COPY cuda.patch /usr/local
 RUN cd /usr/local/cuda && patch -p0 < ../cuda.patch
+
+# Patch Intel 2020.1 tbb install - Remove when upgrading intel compiler
+COPY inteltbb.patch /opt/intel
+RUN cd /opt/intel && patch -p0 < inteltbb.patch
+
+# Install oneAPI
+# COPY oneAPI.repo /etc/yum.repos.d/
+# RUN --mount=type=cache,target=/var/cache/yum  yum -y install intel-basekit
 
 # Setup home environment
 RUN useradd -m dev && echo "dev:dev" | chpasswd && usermod -aG wheel dev && mkdir -p /home/dev/BUILD && chown -R dev:dev /home/dev

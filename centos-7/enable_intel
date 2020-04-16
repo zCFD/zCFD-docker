@@ -2,6 +2,6 @@
 
 source /opt/rh/devtoolset-7/enable
 source /opt/rh/rh-git29/enable
-source /opt/intel/compilers_and_libraries_2019.5.281/linux/bin/compilervars.sh intel64
+source /opt/intel/compilers_and_libraries_2020.1.217/linux/bin/compilervars.sh intel64
 
 exec $*
