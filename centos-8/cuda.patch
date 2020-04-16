@@ -1,0 +1,11 @@
+--- include/crt/host_config.h	2019-10-24 04:44:30.000000000 +0000
++++ include/crt/host_config.h.new	2020-04-04 17:40:58.118188980 +0000
+@@ -107,7 +107,7 @@
+
+ #if (__ICC != 1500 && __ICC != 1600 && __ICC != 1700 && __ICC != 1800 && __ICC != 1900) || !defined(__GNUC__) || !defined(__LP64__)
+
+-#error -- unsupported ICC configuration! Only ICC 15.0, ICC 16.0, ICC 17.0, ICC 18.0 and ICC 19.0 on Linux x86_64 are supported!
++//#error -- unsupported ICC configuration! Only ICC 15.0, ICC 16.0, ICC 17.0, ICC 18.0 and ICC 19.0 on Linux x86_64 are supported!
+
+ #endif /* (__ICC != 1500 && __ICC != 1600 && __ICC != 1700 && __ICC != 1800 && __ICC != 1900) || !__GNUC__ || !__LP64__ */
+
