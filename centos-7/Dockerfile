@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-FROM centos:7.6.1810 as intel
+FROM centos:7.6.1810 as intelinstall
 
 # When updating the intel compiler also update enable_intel and intel.repo  script
 COPY intel.repo /etc/yum.repos.d/
@@ -11,7 +11,7 @@ RUN yum clean metadata && yum -y install intel-parallel-studio-xe-icc intel-para
 RUN --mount=type=cache,target=/var/cache/yum yum -y install patch
 
 
-FROM centos:7.6.1810 as gcc
+FROM centos:7.6.1810 as gccbuild
 
 LABEL maintainer zenotech
 
@@ -40,14 +40,18 @@ COPY enable_intel /usr/local/
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/usr/local/enable_intel"]
 CMD ["/bin/bash"]
 
-FROM gcc
+FROM gccbuild as intel
 
 #Install Intel compiler
-COPY --from=intel /opt/intel /opt/intel
+COPY --from=intelinstall /opt/intel /opt/intel
 
 ENV INTEL_LICENSE_FILE=28000@172.17.0.1
 
 # Install oneAPI
 # COPY oneAPI.repo /etc/yum.repos.d/
 # RUN --mount=type=cache,target=/var/cache/yum  yum -y install intel-basekit
+FROM gccbuild as gcc
 
+USER root
+RUN --mount=type=cache,target=/var/cache/yum yum -y install mpich-devel
+USER dev
