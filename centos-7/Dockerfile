@@ -34,13 +34,14 @@ USER dev
 
 ENV PATH=${PATH}:/usr/local/cuda/bin
 
+CMD ["/bin/bash"]
+
+FROM gccbuild as intel
+
 COPY enable_intel /usr/local/
 
 # Make sure the above SCLs are already enabled
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/usr/local/enable_intel"]
-CMD ["/bin/bash"]
-
-FROM gccbuild as intel
 
 #Install Intel compiler
 COPY --from=intelinstall /opt/intel /opt/intel
@@ -52,6 +53,10 @@ ENV INTEL_LICENSE_FILE=28000@172.17.0.1
 # RUN --mount=type=cache,target=/var/cache/yum  yum -y install intel-basekit
 FROM gccbuild as gcc
 
+COPY enable_gcc /usr/local/
+
+# Make sure the above SCLs are already enabled
+ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/usr/local/enable_gcc"]
 USER root
-RUN --mount=type=cache,target=/var/cache/yum yum -y install mpich-devel
+RUN --mount=type=cache,target=/var/cache/yum yum -y install openmpi-devel
 USER dev

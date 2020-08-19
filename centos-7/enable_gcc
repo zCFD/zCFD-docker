@@ -1,0 +1,8 @@
+#!/bin/bash
+
+source /opt/rh/devtoolset-8/enable
+source /opt/rh/rh-git218/enable
+
+export PATH=/usr/lib64/openmpi/bin:$PATH
+
+exec $*
