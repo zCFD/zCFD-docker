@@ -53,6 +53,10 @@ ENV INTEL_LICENSE_FILE=28000@172.17.0.1
 # RUN --mount=type=cache,target=/var/cache/yum  yum -y install intel-basekit
 FROM gccbuild as gcc
 
+USER root
+RUN --mount=type=cache,target=/var/cache/yum yum-config-manager --add-repo https://yum.repos.intel.com/mkl/setup/intel-mkl.repo && yum clean all && yum -y install intel-mkl-gnu-rt
+USER dev
+
 COPY enable_gcc /usr/local/
 
 # Make sure the above SCLs are already enabled
