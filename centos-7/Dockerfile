@@ -54,7 +54,7 @@ ENV INTEL_LICENSE_FILE=28000@172.17.0.1
 FROM gccbuild as gcc
 
 USER root
-RUN --mount=type=cache,target=/var/cache/yum yum-config-manager --add-repo https://yum.repos.intel.com/mkl/setup/intel-mkl.repo && yum clean all && yum -y install intel-mkl-gnu-rt
+RUN --mount=type=cache,target=/var/cache/yum yum-config-manager --add-repo https://yum.repos.intel.com/mkl/setup/intel-mkl.repo && yum clean all && yum -y install intel-mkl-gnu-rt intel-mkl-common-c
 USER dev
 
 COPY enable_gcc /usr/local/
