@@ -62,5 +62,5 @@ COPY enable_gcc /usr/local/
 # Make sure the above SCLs are already enabled
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/usr/local/enable_gcc"]
 USER root
-RUN --mount=type=cache,target=/var/cache/yum yum -y install openmpi-devel
+RUN --mount=type=cache,target=/var/cache/yum yum -y install openmpi3-devel
 USER dev
