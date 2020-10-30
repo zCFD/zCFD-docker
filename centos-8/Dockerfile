@@ -1,5 +1,8 @@
 # syntax=docker/dockerfile:experimental
-FROM centos:8.1.1911 as intelinstall
+
+FROM nvidia/cuda:11.1-devel-centos8 as baseinstall
+
+FROM baseinstall as intelinstall
 
 # When updating the intel compiler also update enable_intel and intel.repo  script
 COPY intel.repo /etc/yum.repos.d/
@@ -11,26 +14,26 @@ RUN yum clean metadata && yum -y install intel-parallel-studio-xe-icc intel-para
 RUN --mount=type=cache,target=/var/cache/yum yum -y install patch
 
 
-FROM centos:8.1.1911 as gccbuild
+FROM baseinstall as gccbuild
 
 LABEL maintainer zenotech
 
 # Dev dependencies
 RUN --mount=type=cache,target=/var/cache/yum  yum -y install which rdma-core-devel libtool kernel-devel kernel-headers numactl-devel wget libffi-devel bzip2 bison flex libXft-devel tcl-devel tk-devel bc bind-utils file
 
-RUN --mount=type=cache,target=/var/cache/yum yum -y install git nodejs && yum -y groupinstall "Development Tools" && yum -y install epel-release && yum -y install dkms gcc-toolset-9-gcc-c++ gcc-toolset-9-gcc-gfortran
-RUN dnf -y install dnf-plugins-core && dnf config-manager --add-repo http://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo && dnf clean all && dnf -y install cuda-toolkit-11-1
+RUN --mount=type=cache,target=/var/cache/yum yum -y install git && yum -y groupinstall "Development Tools" && yum -y install epel-release && yum -y install dkms gcc-toolset-9-gcc-c++ gcc-toolset-9-gcc-gfortran
+#RUN dnf -y install dnf-plugins-core && dnf config-manager --add-repo http://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo && dnf clean all && dnf -y install cuda-11-1
+RUN dnf -y module install nodejs:10
 
-#RUN --mount=type=cache,target=/var/cache/yum yum -y install devtoolset-8-toolchain rh-git218 rh-nodejs10
-#RUN --mount=type=cache,target=/var/cache/yum yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-rhel7.repo && yum clean all && yum -y install cuda-toolkit-11-1
 RUN --mount=type=cache,target=/var/cache/yum yum -y install sudo patch
 
 # Workaround for slow Intel license checkout on centos > 7.2
 RUN sed -i 's/myhostname//' /etc/nsswitch.conf
 
 # Setup home environment
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN echo -e "dev\tALL=(ALL)\tNOPASSWD: ALL" > /etc/sudoers.d/020_sudo_for_me 
 RUN useradd -m dev && echo "dev:dev" | chpasswd && mkdir -p /home/dev/BUILD && chown -R dev:dev /home/dev
+RUN usermod -aG wheel dev
 
 RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 && chmod +x /usr/local/bin/dumb-init
 WORKDIR /home/dev
@@ -60,8 +63,16 @@ FROM intel as oneapi
 # Install oneAPI
 COPY oneAPI.repo /etc/yum.repos.d/
 USER root
-RUN --mount=type=cache,target=/var/cache/yum  yum -y --skip-broken install intel-basekit
+RUN --mount=type=cache,target=/var/cache/yum  yum -y install intel-basekit
+COPY enable_oneapi /usr/local
+COPY build_sycl.sh /home/dev
+RUN chown dev:dev /home/dev/build_sycl.sh
+# Rename cuda CL directory so it does not clash with oneapi
+RUN mv /usr/local/cuda/include/CL /usr/local/cuda/include/CL.cuda
 USER dev
+RUN chmod u+rx /home/dev/build_sycl.sh && /home/dev/build_sycl.sh
+
+ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/usr/local/enable_oneapi"]
 
 # GCC target
 FROM gccbuild as gcc
