@@ -19,5 +19,11 @@ git clone https://github.com/intel/llvm -b sycl
 python $DPCPP_HOME/llvm/buildbot/configure.py --cuda --cmake-opt="-DCMAKE_LIBRARY_PATH=/usr/local/cuda/lib64/stubs" 
 python $DPCPP_HOME/llvm/buildbot/compile.py 
 
+sudo cp -r $DPCPP_HOME/llvm/build/install /usr/local/llvm
+
+echo 'export PATH=/usr/local/llvm/bin:$PATH' > /etc/profile.d/llvm.sh
+echo 'export LD_LIBRARY_PATH=/usr/local/llvm/lib:$LD_LIBRARY_PATH' >>  /etc/profile.d/llvm.sh
+chmod +x /etc/profile.d/llvm.sh
+
 export PATH=$DPCPP_HOME/llvm/build/bin:$PATH
 export LD_LIBRARY_PATH=$DPCPP_HOME/llvm/build/lib:$LD_LIBRARY_PATH

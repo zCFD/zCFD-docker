@@ -4,4 +4,6 @@ source /opt/rh/gcc-toolset-9/enable
 #source /opt/rh/rh-git218/enable
 source /opt/intel/compilers_and_libraries_2020.4.304/linux/bin/compilervars.sh intel64
 source /opt/intel/oneapi/setvars.sh
-exec $*
+export PATH=/usr/local/llvm/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/llvm/lib:$LD_LIBRARY_PATH
+bash -c "$*"
