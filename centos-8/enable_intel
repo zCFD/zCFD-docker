@@ -4,4 +4,4 @@ source /opt/rh/gcc-toolset-9/enable
 #source /opt/rh/rh-git218/enable
 source /opt/intel/compilers_and_libraries_2020.4.304/linux/bin/compilervars.sh intel64
 
-exec $*
+bash -c "$*"

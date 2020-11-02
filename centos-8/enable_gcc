@@ -6,4 +6,4 @@ source /opt/intel/compilers_and_libraries_2020.4.304/linux/bin/compilervars.sh i
 
 export PATH=/usr/lib64/openmpi3/bin:$PATH
 
-exec $*
+bash -c "$*"
