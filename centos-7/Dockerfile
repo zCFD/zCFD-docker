@@ -16,7 +16,7 @@ FROM centos:7.6.1810 as gccbuild
 LABEL maintainer zenotech
 
 # Dev dependencies
-RUN --mount=type=cache,target=/var/cache/yum  yum -y install patch which centos-release-scl rdma-core-devel libtool kernel-devel kernel-headers numactl-devel wget libffi-devel bzip2 bison flex bc bind-utils file curl-devel
+RUN --mount=type=cache,target=/var/cache/yum  yum -y install patch which centos-release-scl rdma-core-devel libtool kernel-devel kernel-headers numactl-devel wget libffi-devel bzip2 bison flex bc bind-utils file curl-devel libGLU-devel
 RUN --mount=type=cache,target=/var/cache/yum yum -y update ca-certificates && yum -y reinstall ca-certificates
 RUN --mount=type=cache,target=/var/cache/yum yum -y install devtoolset-8-toolchain rh-git218 rh-nodejs10
 RUN --mount=type=cache,target=/var/cache/yum yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-rhel7.repo && yum clean all && yum -y install cuda-toolkit-11-1
